@@ -1,0 +1,55 @@
+version: "3"
+services:
+    oracle-db:
+        image: wnameless/oracle-xe-11g-r2
+        container_name: oracledatabase
+        privileged: true
+        ports:
+            - 1521:1521
+        volumes:
+            - /home/oracle/oradata:/opt/oracle/oradata # persistent oracle database data.
+        environment:
+            - ORACLE_ALLOW_REMOTE=true
+            - ORACLE_SID=XE
+            - ORACLE_PDB=XE
+            - ORACLE_CHARACTERSET=AL32UTF8
+        networks: 
+            - aplicacao-network
+networks:
+    aplicacao-network:
+        driver: bridge
+
+# Acompanhar a execução do container 
+#   docker logs oracledatabase
+
+# Acessar o container
+#   docker exec -it oracledatabase
+
+# Conectando como sysdba
+#   conn / sysdba;
+
+# Alterar a sessão
+#   alter session set "_ORACLE_SCRIPT"=true;
+
+# criar as tablespace
+#   CREATE TABLESPACE TSD_{base} LOGGING DATAFILE '/opt/oracle/oradata/TSD_{base}' SIZE 2000M AUTOEXTEND ON NEXT 200M MAXSIZE UNLIMITED;
+#   CREATE TABLESPACE TSI_{base} LOGGING DATAFILE '/opt/oracle/oradata/TSI_{base}' SIZE 200M AUTOEXTEND ON NEXT 50M MAXSIZE UNLIMITED;
+
+# Criar o usuario
+#    CREATE USER {user} IDENTIFIED BY {pass} DEFAULT TABLESPACE TSI{base} QUOTA UNILIMITED ON TSD_{base} QUOTA UNLIMITED ON TSI_{base};
+
+# Conceda ao usuario criado as permissoes necessarias
+#    GRANT CREATE SESSION TO {user}
+#    GRANT CREATE PROCEDURE TO {user}
+#    GRANT CREATE VIEW TO {user}
+#    GRANT CREATE TABLE TO {user}
+#    GRANT CREATE SEQUENCE TO {user}
+#    GRANT CREATE TRIGGER TO {user}
+
+# Conectar a database
+#    name:
+#    username:
+#    password:
+#    hostname:
+#    port: 1521
+#    sid: XE
